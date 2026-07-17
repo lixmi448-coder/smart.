@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Web Interface</title>
+    <style>
+        body { margin: 0; background: #0a1120; color: white; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Lista de Canais (Esquerda) com barra customizada */
+        #lista { 
+            width: 350px; 
+            overflow-y: auto; 
+            border-right: 2px solid #1a2a4a; 
+            padding: 10px; 
+            flex-shrink: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #34495e #0a1120;
+        }
+        
+        #lista::-webkit-scrollbar { width: 8px; }
+        #lista::-webkit-scrollbar-track { background: #0a1120; }
+        #lista::-webkit-scrollbar-thumb { background: #34495e; border-radius: 4px; }
+
+        .canal-item { 
+            display: flex; align-items: center; padding: 12px; cursor: pointer; 
+            border: 2px solid transparent; margin-bottom: 5px; border-radius: 8px; transition: 0.2s; 
+        }
+        .canal-item:focus, .canal-item:hover { border-color: #3498db; background: #1a2a4a; outline: none; }
+        .canal-item span.num { width: 30px; font-weight: bold; color: #8899aa; }
+        .canal-item img { width: 40px; height: 40px; margin: 0 15px; border-radius: 4px; object-fit: contain; background: #fff; }
+
+        /* Player (Direita) */
+        #player-container { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; }
+        #video-screen { width: 100%; height: 80%; background: #000; border: 3px solid #1a2a4a; border-radius: 12px; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
+        #btn-zoom { margin-top: 20px; padding: 15px 30px; background: #3498db; border: none; color: white; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 8px; }
+        #btn-zoom:focus { border: 2px solid white; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<div id="lista">
+    <!-- Lista de canais -->
+    <div class="canal-item" tabindex="0" data-url="https://6836041ea1117.streamlock.net/cverde/cverde/chunklist_w1426168980.m3u8"><span class="num">01</span><img src="imagens/Sbt.png"><span>SBT NACIONAL</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://media.cdntvms.com.br/record_nacional_sat/tracks-v1a1/mono.m3u8"><span class="num">02</span><img src="imagens/record.png"><span>RECORD TV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8"><span class="num">03</span><img src="imagens/tvcultura.png"><span>TV CULTURA</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://tvbrasil-stream.ebc.com.br/index.m3u8"><span class="num">04</span><img src="imagens/tvbrasil.png"><span>TV BRASIL</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://media.cdntvms.com.br/band_sat/tracks-v1a1/mono.m3u8"><span class="num">05</span><img src="imagens/band.png"><span>BAND TV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://amg00740-sofa-amg00740c7-tcl-us-7126.playouts.now.amagi.tv/1080p-cc/index.m3u8"><span class="num">06</span><img src="imagens/adrenalinapura.png"><span>ADRENALINA PURA</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://amg01391-amg01391c10-tcl-br-9630.playouts.now.amagi.tv/480p-cc/index.m3u8"><span class="num">07</span><img src="imagens/cazetv.png"><span>CAZÉ TV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://live20.bozztv.com/giatvplayout7/giatv-208314/tracks-v1a1/mono.ts.m3u8"><span class="num">08</span><img src="imagens/boomerang.png"><span>BOOMERANG</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv2.samcast.com.br/tvcidadebrasil/tvcidadebrasil/playlist.m3u8?hls_ctx=1l35901a"><span class="num">09</span><img src="imagens/cidadebrasil.png"><span>TV CIDADE BRASIL</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://streaming.cloudecast.com/hls/tvlifeamerica/index.m3u8?checkedby:iptvcat.com"><span class="num">10</span><img src="imagens/lifeamerica.png"><span>TV LIFE AMERICA</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv1.srvif.com/jetsontv/jetsontv/playlist.m3u8"><span class="num">11</span><img src="imagens/osjet.png"><span>TV OS JETSONS</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://www.youtube.com/embed/xIs3odCrjZs?autoplay=1"><span class="num">12</span><img src="imagens/picapau.png"><span>PICA-PAU</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stream.ads.ottera.tv/cl/260717d9d78kb1tdoc739opmcg/848x480_1686360_2_f.m3u8"><span class="num">13</span><img src="imagens/cinepix.png"><span>TV CINE PIX</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://5a57bda70564a.streamlock.net/tvpasso/tvpasso.sdp/playlist.m3u8"><span class="num">14</span><img src="imagens/passofundo.png"><span>TV PASSO FUNDO</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://video04.logicahost.com.br/cloudingtv/cloudingtv/chunklist_w1178147841.m3u8"><span class="num">15</span><img src="imagens/redeclouding.png"><span>TV REDE CLOUDING</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://amg00711-zylo-amg00711c12-plex-us-8636.playouts.now.amagi.tv/playlist1080p.m3u8"><span class="num">16</span><img src="imagens/sessaotrash.png"><span>TV SESSÃO TRASH</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://spt-sonyoneclassicas-1-br.samsung.wurl.tv/1200.m3u8"><span class="num">17</span><img src="imagens/sonycinema.png"><span>TV SONY ONE CINEMA</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://spt-sonyoneemocoes-1-br.samsung.wurl.tv/1200.m3u8"><span class="num">18</span><img src="imagens/sonyoneemo.png"><span>SONY ONE EMOÇÕES</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://www.youtube.com/embed/400k2SKoeh4?autoplay=1"><span class="num">19</span><img src="imagens/tom (2).png"><span>TOM E JERRY</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://amg00627-amg00627c30-rakuten-es-3990.playouts.now.amagi.tv/playlist/amg00627-banijayfast-mrbeanescc-rakutenes/playlist.m3u8"><span class="num">20</span><img src="imagens/bean.png"><span>MR BEAN</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"><span class="num">21</span><img src="imagens/nik.png"><span>NIKTOONS TV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://canalgov-stream.ebc.com.br/index.m3u8"><span class="num">22</span><img src="imagens/gov.png"><span>CANAL GOV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv1.samcast.com.br/giovane7843/giovane7843/playlist.m3u8"><span class="num">23</span><img src="imagens/tvaldeia.png"><span>TV ALDEIA</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://video01.logicahost.com.br/tvideonews/tvideonews/playlist.m3u8"><span class="num">24</span><img src="imagens/tvideonews.png"><span>TV TVIDEONEWS</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv1.srvif.com/loadingtv/loadingtv/playlist.m3u8"><span class="num">25</span><img src="imagens/tvloading.png"><span>TV LOADING</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://5cf4a2c2512a2.streamlock.net/tvmax/tvmax/playlist.m3u8"><span class="num">26</span><img src="imagens/tvmax.png"><span>TV TVMAX</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://5cf4a2c2512a2.streamlock.net/tvsuldeminas/tvsuldeminas/playlist.m3u8"><span class="num">27</span><img src="imagens/tvsuldeminas.png"><span>TV SUL DE MINAS</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://stmv1.srvif.com/tvserie/tvserie/playlist.m3u8"><span class="num">28</span><img src="imagens/webtvcine.png"><span>WEB TV CINE</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://tv02.zas.media:1936/wordingtv/wordingtv/chunklist_w191505969.m3u8"><span class="num">29</span><img src="imagens/wording.png"><span>WORDING TV</span></div>
+    <div class="canal-item" tabindex="0" data-url="https://amogonetworx-grjngo-1-eu.plex.wurl.tv/1200.m3u8"><span class="num">30</span><img src="imagens/Grjngo.png"><span>TV GRJNGO</span></div>
+</div>
+
+<div id="player-container">
+    <div id="video-screen">
+        <div style="text-align:center; margin-top: 20%; color: #555;">Selecione um canal</div>
+    </div>
+    <button id="btn-zoom" tabindex="0" onclick="toggleZoom()">TELA CHEIA</button>
+</div>
+
+<script>
+    let currentIndex = 0;
+    const items = document.querySelectorAll('.canal-item');
+
+    function carregarCanal(index) {
+        currentIndex = index;
+        const url = items[index].getAttribute('data-url');
+        document.getElementById('video-screen').innerHTML = `<iframe src="${url}" allow="autoplay" allowfullscreen></iframe>`;
+        items[index].focus();
+    }
+
+    items.forEach((item, index) => {
+        item.addEventListener('click', () => carregarCanal(index));
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+            currentIndex = (currentIndex + 1) % items.length;
+            carregarCanal(currentIndex);
+        } else if (e.key === 'ArrowUp') {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            carregarCanal(currentIndex);
+        } else if (e.key === 'Backspace' || e.key === 'Escape') {
+            if (document.fullscreenElement) document.exitFullscreen();
+        }
+    });
+
+    function toggleZoom() {
+        const elem = document.getElementById('player-container');
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+</script>
+</body>
+</html>
